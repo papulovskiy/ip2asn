@@ -40,7 +40,18 @@ type IPv6Network struct {
 	key     string
 }
 
+var gRoot *IPTree
+
+// With AS number changed to 32-bit integer in 2007
+// original idea to use array for AS storage is not so good.
+var gASN map[int]*ASN
+var gKey map[string]*Key
+
 func main() {
+	gRoot = &IPTree{node: nil}
+	gASN = make(map[int]*ASN)
+	gKey = make(map[string]*Key)
+
 	files := []string{
 		"./data/delegated-afrinic-extended-latest",
 		"./data/delegated-apnic-extended-latest",
@@ -52,8 +63,10 @@ func main() {
 		fmt.Println("Reading", filename)
 		asns, ipv4s := read(filename)
 		fmt.Printf("Got %v ASNs and %v IPv4 networks\n", len(asns), len(ipv4s))
+		add_asns(asns)
+		add_ipv4s(ipv4s, gRoot)
 	}
-
+	// fmt.Println(gRoot.zero.one)
 }
 
 // ftp://ftp.ripe.net/ripe/stats/RIR-Statistics-Exchange-Format.txt
