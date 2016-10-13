@@ -92,37 +92,12 @@ func make_ipv4(parts []string) *IPv4Network {
 	}
 }
 
-// func make_ipv6(parts []string) *IPv6Network {
-// 	number, err := strconv.ParseInt(parts[4], 10, 32)
-// 	check(err)
-// 	mask := int(math.Log(float64(number))/math.Log(2.0))
-
-// 	var date int64
-// 	if parts[6] == "allocated" {
-// 		date, err = strconv.ParseInt(parts[5], 10, 32)
-// 		check(err)
-// 	} else {
-// 		date = 0
-// 	}
-
-// 	return &IPv6Network{
-// 		address: net.ParseIP(parts[3]).To16(),
-// 		mask:    mask,
-// 		status:  parts[6],
-// 		date:    int(date),
-// 		country: parts[1],
-// 		source:  parts[0],
-// 		key:     parts[7],
-// 	}
-// }
-
 func read(filename string) {
 	var asns []*ASN
 	var ipv4s []*IPv4Network
-	// var ipv6s []*IPv6Network
 
-	var asns_count, ipv4s_count, ipv6s_count int64
-	var current_asn, current_ipv4, current_ipv6 int = 0, 0, 0
+	var asns_count, ipv4s_count int64
+	var current_asn, current_ipv4 int = 0, 0
 
 	file, err := os.Open(filename)
 	check(err)
@@ -144,10 +119,6 @@ func read(filename string) {
 				ipv4s_count, err = strconv.ParseInt(parts[4], 10, 64)
 				check(err)
 				ipv4s = make([]*IPv4Network, ipv4s_count)
-			case "ipv6":
-				ipv6s_count, err = strconv.ParseInt(parts[4], 10, 64)
-				check(err)
-				// ipv6s = make([]*IPv6Network, ipv6s_count)
 			}
 			continue
 		}
@@ -158,19 +129,8 @@ func read(filename string) {
 		case "ipv4":
 			ipv4s[current_ipv4] = make_ipv4(parts)
 			current_ipv4++
-		case "ipv6":
-			// ipv6s[current_ipv6] = make_ipv6(parts)
-			current_ipv6++
 		}
 	}
-
-	// Just to avoid compiler complaints
-	fmt.Println(asns_count)
-	fmt.Println(ipv4s_count)
-	fmt.Println(ipv6s_count)
-	fmt.Println(asns[0])
-	fmt.Println(ipv4s[0])
-	// fmt.Println(ipv6s[0])
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -178,6 +138,7 @@ func read(filename string) {
 }
 
 func main() {
+	fmt.Println("Reading")
 	read("./data/delegated-afrinic-extended-latest")
 
 }
