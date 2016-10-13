@@ -41,12 +41,18 @@ type IPv6Network struct {
 }
 
 func main() {
-	fmt.Println("Reading")
-	read("./data/delegated-afrinic-extended-latest")
-	read("./data/delegated-apnic-extended-latest")
-	read("./data/delegated-arin-extended-latest")
-	read("./data/delegated-lacnic-extended-latest")
-	read("./data/delegated-ripencc-extended-latest")
+	files := []string{
+		"./data/delegated-afrinic-extended-latest",
+		"./data/delegated-apnic-extended-latest",
+		"./data/delegated-arin-extended-latest",
+		"./data/delegated-lacnic-extended-latest",
+		"./data/delegated-ripencc-extended-latest",
+	}
+	for _, filename := range files {
+		fmt.Println("Reading", filename)
+		asns, ipv4s := read(filename)
+		fmt.Printf("Got %v ASNs and %v IPv4 networks\n", len(asns), len(ipv4s))
+	}
 
 }
 

@@ -61,7 +61,7 @@ func make_ipv4(parts []string) *IPv4Network {
 	}
 }
 
-func read(filename string) {
+func read(filename string) ([]*ASN, []*IPv4Network) {
 	var asns []*ASN
 	var ipv4s []*IPv4Network
 
@@ -104,4 +104,5 @@ func read(filename string) {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+	return asns, ipv4s
 }
