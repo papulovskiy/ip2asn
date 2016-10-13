@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/binary"
-	"fmt"
+	// "fmt"
+	"math/rand"
 	"net"
 )
 
@@ -23,7 +24,7 @@ func add_asns(asns []*ASN) {
 		}
 		gKey[as.key].asns = append(gKey[as.key].asns, as.number)
 	}
-	fmt.Printf("Total count of AS: %v\n", len(gASN))
+	// fmt.Printf("Total count of AS: %v\n", len(gASN))
 }
 
 type IPTree struct {
@@ -68,4 +69,38 @@ func add_ipv4s(ipv4s []*IPv4Network, root *IPTree) {
 		}
 		gKey[net.key].ipv4s = append(gKey[net.key].ipv4s, net)
 	}
+}
+
+func findNet(ip net.IP) *IPv4Network {
+	intip := ip2int(ip)
+	current := gRoot
+
+	for i := 0; i < 32; i++ {
+		bit := uint32(1 << uint(32-i))
+		if intip&bit != 0 {
+			if current.one != nil {
+				current = current.one
+			} else {
+				return current.node
+			}
+		} else {
+			if current.zero != nil {
+				current = current.zero
+			} else {
+				return current.node
+			}
+		}
+	}
+
+	// fmt.Println(intip)
+	return &IPv4Network{}
+}
+
+func findRandomNet(r *rand.Rand) *IPv4Network {
+	a := r.Int31n(220)
+	b := r.Int31n(256)
+	c := r.Int31n(256)
+	d := r.Int31n(256)
+	ip := net.IPv4(byte(a), byte(b), byte(c), byte(d))
+	return findNet(ip.To4())
 }

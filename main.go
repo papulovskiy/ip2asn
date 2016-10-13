@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
+	"time"
 )
 
 func check(e error) {
@@ -66,7 +68,13 @@ func main() {
 		add_asns(asns)
 		add_ipv4s(ipv4s, gRoot)
 	}
-	// fmt.Println(gRoot.zero.one)
+
+	// rand.Seed(2347289347)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < 100; i++ {
+		result := findRandomNet(r)
+		fmt.Println(result)
+	}
 }
 
 // ftp://ftp.ripe.net/ripe/stats/RIR-Statistics-Exchange-Format.txt
