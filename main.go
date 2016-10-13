@@ -51,12 +51,16 @@ type IPv6Network struct {
 func make_asn(parts []string) *ASN {
 	number, err := strconv.ParseInt(parts[3], 10, 32)
 	check(err)
+
+	var key string
 	var date int64
 	if parts[6] == "allocated" {
 		date, err = strconv.ParseInt(parts[5], 10, 32)
 		check(err)
+		key = parts[7]
 	} else {
 		date = 0
+		key = ""
 	}
 	return &ASN{
 		number:  int(number),
@@ -64,7 +68,7 @@ func make_asn(parts []string) *ASN {
 		date:    int(date),
 		country: parts[1],
 		source:  parts[0],
-		key:     parts[7],
+		key:     key,
 	}
 }
 
@@ -73,12 +77,15 @@ func make_ipv4(parts []string) *IPv4Network {
 	check(err)
 	mask := 32 - int(math.Log(float64(number))/math.Log(2.0))
 
+	var key string
 	var date int64
-	if parts[6] == "allocated" {
+	if parts[6] == "allocated" || parts[6] == "assigned" {
 		date, err = strconv.ParseInt(parts[5], 10, 32)
 		check(err)
+		key = parts[7]
 	} else {
 		date = 0
+		key = ""
 	}
 
 	return &IPv4Network{
@@ -88,7 +95,7 @@ func make_ipv4(parts []string) *IPv4Network {
 		date:    int(date),
 		country: parts[1],
 		source:  parts[0],
-		key:     parts[7],
+		key:     key,
 	}
 }
 
@@ -106,7 +113,7 @@ func read(filename string) {
 	for scanner.Scan() {
 		// fmt.Println(scanner.Text())
 		parts := strings.Split(scanner.Text(), "|")
-		if parts[0] == "2" {
+		if len(parts) < 5 || parts[0] == "2" {
 			continue
 		}
 		if parts[5] == "summary" {
@@ -140,6 +147,10 @@ func read(filename string) {
 func main() {
 	fmt.Println("Reading")
 	read("./data/delegated-afrinic-extended-latest")
+	read("./data/delegated-apnic-extended-latest")
+	read("./data/delegated-arin-extended-latest")
+	read("./data/delegated-lacnic-extended-latest")
+	read("./data/delegated-ripencc-extended-latest")
 
 }
 
